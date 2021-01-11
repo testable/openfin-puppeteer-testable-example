@@ -7,7 +7,7 @@ An example project for testing an OpenFin application with [Puppeteer](https://p
 1. Install the latest Node.js and npm
 2. `git clone` this repository and change into the directory
 3. Run `npm install` to install all dependencies.
-4. For Mac/Linux, install the Testable fork of openfin-cli that makes sure the devtools port works correctly: `npm install -g testable-openfin-cli`.
+4. For Mac/Linux, install openfin-cli: `npm install -g openfin-cli`.
 
 ### Running locally
 

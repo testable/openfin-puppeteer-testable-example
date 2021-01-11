@@ -1,12 +1,12 @@
 
-const spawn = require('child_process').spawn;
+const exec = require('child_process').exec;
+const os = require('os');
 const puppeteer = require('puppeteer-core');
 const { promisify } = require('util')
 const sleep = promisify(setTimeout);
 const should = require('chai').should()
 
 const IsWinOS = process.platform === 'win32';
-const LaunchTarget = IsWinOS ? 'RunOpenFin.bat' : `${process.cwd()}/RunOpenFin.sh`;
 const ConfigUrl = process.env.CONFIG_URL || (IsWinOS ? `${process.cwd()}\\app_sample.json` : `${process.cwd()}/app_sample.json`);
 const RemoteDebuggingPort = process.env.CHROME_PORT || 12565;
 const TimeoutMs = 60000;
@@ -36,7 +36,9 @@ async function findPage(title, browser) {
 }
 
 function launch() {
-    spawn(LaunchTarget, [`--config=${ConfigUrl}`, `--remote-debugging-port=${RemoteDebuggingPort}`]);
+    exec(IsWinOS ?
+        `OpenFinRVM.exe --config=${ConfigUrl} --runtime-arguments="--remote-debugging-port=${RemoteDebuggingPort}"` :
+        `runtimeArgs="--remote-debugging-port=${RemoteDebuggingPort}" openfin -l -c ${ConfigUrl}`);
 }
 
 async function connect() {
@@ -57,7 +59,6 @@ before(async function () {
 
 describe('Hello OpenFin App testing with Puppeteer', function () {
     var notificationButton, cpuInfoButton, cpuInfoExitButton;
-
 
     /**
      *  Check if OpenFin Javascript API fin.desktop.System.getVersion exists
@@ -91,7 +92,6 @@ describe('Hello OpenFin App testing with Puppeteer', function () {
         await notificationButton.click();
     });
 
-
     it("Find CPU Info button", async () => {
         const result = await page.$("#cpu-info");
         should.exist(result);
@@ -104,12 +104,10 @@ describe('Hello OpenFin App testing with Puppeteer', function () {
         await sleep(3000); // pause just for demo purpose so we can see the window
     });
 
-
     it('Switch to CPU Info window', async () => {
         global.page = await findPage('Hello OpenFin CPU Info', browser);
         await page.screenshot({ path: 'CPU.png' });
     });
-
 
     it("Find Exit button for CPU Info window", async () => {
         const result = await page.$("#close-app");

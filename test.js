@@ -1,6 +1,5 @@
 
 const exec = require('child_process').exec;
-const os = require('os');
 const puppeteer = require('puppeteer-core');
 const { promisify } = require('util')
 const sleep = promisify(setTimeout);
@@ -36,9 +35,15 @@ async function findPage(title, browser) {
 }
 
 function launch() {
-    exec(IsWinOS ?
+    const proc = exec(IsWinOS ?
         `OpenFinRVM.exe --config=${ConfigUrl} --runtime-arguments="--remote-debugging-port=${RemoteDebuggingPort}"` :
         `runtimeArgs="--remote-debugging-port=${RemoteDebuggingPort}" openfin -l -c ${ConfigUrl}`);
+    proc.stdout.on('data', (data) => {
+        console.log(data.toString());
+    });
+    proc.stderr.on('data', (data) => {
+        console.log(data.toString());
+    });
 }
 
 async function connect() {

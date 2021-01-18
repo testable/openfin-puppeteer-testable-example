@@ -28,6 +28,7 @@ async function findPage(title, browser) {
         const pages = await browser.pages();
         for (const page of pages) {
             const pageTitle = await page.title();
+            console.log('PAGE TITLE: ' + pageTitle);
             if (pageTitle === title)
                 return page;
         }

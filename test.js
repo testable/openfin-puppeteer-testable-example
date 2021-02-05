@@ -28,7 +28,6 @@ async function findPage(title, browser) {
         const pages = await browser.pages();
         for (const page of pages) {
             const pageTitle = await page.title();
-            console.log('PAGE TITLE: ' + pageTitle);
             if (pageTitle === title)
                 return page;
         }
@@ -37,7 +36,7 @@ async function findPage(title, browser) {
 
 function launch() {
     const proc = exec(IsWinOS ?
-        `c:\\Users\\foo2\\AppData\\Local\\OpenFin\\OpenFinRVM.exe --config=${ConfigUrl} --runtime-arguments="--remote-debugging-port=${RemoteDebuggingPort}"` :
+        `${process.env.LOCALAPPDATA}\\OpenFin\\OpenFinRVM.exe --config=${ConfigUrl} --runtime-arguments="--remote-debugging-port=${RemoteDebuggingPort}"` :
         `runtimeArgs="--remote-debugging-port=${RemoteDebuggingPort}" openfin -l -c ${ConfigUrl}`);
     proc.stdout.on('data', (data) => {
         console.log(data.toString());

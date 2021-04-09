@@ -35,7 +35,7 @@ async function findPage(title, browser) {
 }
 
 function launch() {
-    console.log(`Launching as ${process.env.USERNAME} in ${process.env.HOME}`);
+    console.log(`Launching as ${process.env.USERNAME} in ${process.env.HOME} ${process.env.USER} ${process.env.INVOKING_USER}`);
     const proc = exec(IsWinOS ?
         `${process.env.LOCALAPPDATA}\\OpenFin\\OpenFinRVM.exe --config=${ConfigUrl} --runtime-arguments="--remote-debugging-port=${RemoteDebuggingPort}"` :
         `runtimeArgs="--remote-debugging-port=${RemoteDebuggingPort}" openfin -l -c ${ConfigUrl}`);

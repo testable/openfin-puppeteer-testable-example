@@ -1,6 +1,6 @@
 ## OpenFin testing with Puppeteer
 
-An example project for testing an OpenFin application with [Puppeteer](https://pptr.dev/). This should work across Windows, Mac, and Linx and is also compatible with execution on [Testable](https://testable.io).
+An example project for testing an OpenFin application with [Puppeteer](https://pptr.dev/). This should work across Windows, Mac, and Linux and is also compatible with execution on [Testable](https://testable.io).
 
 ### Prerequisites to run locally
 

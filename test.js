@@ -43,9 +43,11 @@ function launch() {
 
 async function connect() {
     return await withTimeout(async function () {
-        return await puppeteer.connect({
-            browserURL: `http://localhost:${RemoteDebuggingPort}`
-        });
+        // connect via the local proxy Testable sets up to get details on each command as well as network related metrics
+        const opts = process.env.TESTABLE_WS_PROXY ? 
+              { browserWSEndpoint: `${process.env.TESTABLE_WS_PROXY}?debuggerAddress=localhost:${RemoteDebuggingPort}` } : 
+              { browserURL: `http://localhost:${RemoteDebuggingPort}` };
+        return await puppeteer.connect(opts);
     });
 }
 

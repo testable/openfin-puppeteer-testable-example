@@ -1,5 +1,5 @@
 
-const exec = require('child_process').exec;
+const spawn = require('child_process').spawn;
 const os = require('os');
 const puppeteer = require('puppeteer-core');
 const { promisify } = require('util')
@@ -36,15 +36,25 @@ async function findPage(title, browser) {
 }
 
 function launch() {
-    exec(IsWinOS ?
-        `${process.env.LOCALAPPDATA}\\OpenFin\\OpenFinRVM.exe --config=${ConfigUrl} --runtime-arguments="--remote-debugging-port=${RemoteDebuggingPort}"` :
-        `runtimeArgs="--remote-debugging-port=${RemoteDebuggingPort}" openfin -l -c ${ConfigUrl}`, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return;
-      }
-      console.log(`stdout: ${stdout}`);
-      console.error(`stderr: ${stderr}`);
+    const proc = 
+        if (IsWinOS)
+            spawn(`${process.env.LOCALAPPDATA}\\OpenFin\\OpenFinRVM.exe`, [`--config=${ConfigUrl}`, `--runtime-arguments="--remote-debugging-port=${RemoteDebuggingPort}"`]);
+        else {
+            const env = process.env;
+            env.runtimeArgs = `--remote-debugging-port=${RemoteDebuggingPort}`;
+            spawn('openfin', ['-l', '-c', ConfigUrl ], { env });
+        }
+    proc.on('error', (err) => {
+        console.error(`Error occurred: ${err}`);
+    });
+    proc.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`);
+    });
+    proc.stderr.on('data', (data) => {
+      console.error(`stderr: ${data}`);
+    });
+    proc.on('close', (code) => {
+      console.log(`openfin exited with code ${code}`);
     });
 }
 

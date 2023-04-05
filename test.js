@@ -36,14 +36,15 @@ async function findPage(title, browser) {
 }
 
 function launch() {
-    const proc = 
-        if (IsWinOS)
-            spawn(`${process.env.LOCALAPPDATA}\\OpenFin\\OpenFinRVM.exe`, [`--config=${ConfigUrl}`, `--runtime-arguments="--remote-debugging-port=${RemoteDebuggingPort}"`]);
-        else {
-            const env = process.env;
-            env.runtimeArgs = `--remote-debugging-port=${RemoteDebuggingPort}`;
-            spawn('openfin', ['-l', '-c', ConfigUrl ], { env });
-        }
+    let proc; 
+    if (IsWinOS)
+        proc = spawn(`${process.env.LOCALAPPDATA}\\OpenFin\\OpenFinRVM.exe`, 
+                     [`--config=${ConfigUrl}`, `--runtime-arguments="--remote-debugging-port=${RemoteDebuggingPort}"`]);
+    else {
+        const env = process.env;
+        env.runtimeArgs = `--remote-debugging-port=${RemoteDebuggingPort}`;
+        proc = spawn('openfin', ['-l', '-c', ConfigUrl ], { env });
+    }
     proc.on('error', (err) => {
         console.error(`Error occurred: ${err}`);
     });

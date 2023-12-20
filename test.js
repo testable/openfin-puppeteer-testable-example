@@ -1,13 +1,15 @@
 
 const exec = require('child_process').exec;
 const os = require('os');
+const path = require('path');
 const puppeteer = require('puppeteer-core');
-const { promisify } = require('util')
+const { promisify } = require('util');
 const sleep = promisify(setTimeout);
-const should = require('chai').should()
+const should = require('chai').should();
 
 const IsWinOS = process.platform === 'win32';
-const ConfigUrl = process.env.CONFIG_URL || (IsWinOS ? `${process.cwd()}\\app_sample.json` : `${process.cwd()}/app_sample.json`);
+const IsTestable = process.env.IS_TESTABLE === 'true';
+const ConfigUrl = process.env.CONFIG_URL || path.join(process.cwd(), 'app_sample.json');
 const RemoteDebuggingPort = process.env.CHROME_PORT || 12565;
 const TimeoutMs = 60000;
 
@@ -52,11 +54,16 @@ async function connect() {
 }
 
 before(async function () {
-    // Launch OpenFin first
-    launch();
-
-    // Try to connect until OpenFin is up
-    global.browser = await connect();
+    if (!IsTestable) {
+        // Launch OpenFin first if running local
+        launch();
+        // Try to connect until OpenFin is up
+        global.browser = await connect();
+    } else {
+        // if Testable we just need to pass the channel arg as openfin:[app-config-path]
+        // app config file can be a relative path within your scenario or a remote http(s) link
+        global.browser = await puppeteer.launch({ channel: 'openfin:app_sample.json' });
+    }
 });
 
 describe('Hello OpenFin App testing with Puppeteer', function () {

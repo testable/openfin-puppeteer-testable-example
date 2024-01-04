@@ -11,11 +11,13 @@ An example project for testing an OpenFin application with [Puppeteer](https://p
 
 ### Running locally
 
-From the project directory run: `./node_modules/.bin/mocha --timeout 60000 test.js`
+From the project directory run: `./node_modules/.bin/mocha --timeout 60000 test.local.js`
 
 And that's it. The test will launch openfin as the chromium instance and run all tests found in the `test.js` spec.
 
 ### Running on Testable
 
 To run this on Testable simply zip up this directory and upload it into a Puppeteer Testable scenario, or connect it via a VCS link.
-Testable takes care of launching OpenFin for you as part of launching Puppeteer by passing the `channel: 'openfin:[app-config-file]` argument (e.g. `{ channel: 'openfin:app_sample.json' }`).
+Testable takes care of launching OpenFin for you as part of launching Puppeteer by passing the `channel: 'openfin:[app-config-file]'` argument (e.g. `{ channel: 'openfin:app_sample.json' }`).
+
+See `test.testable.js` for the Testable example.

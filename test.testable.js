@@ -1,16 +1,10 @@
 
-const exec = require('child_process').exec;
-const os = require('os');
-const path = require('path');
 const puppeteer = require('puppeteer-core');
 const { promisify } = require('util');
 const sleep = promisify(setTimeout);
 const should = require('chai').should();
 
-const IsWinOS = process.platform === 'win32';
-const IsTestable = process.env.IS_TESTABLE === 'true';
-const ConfigUrl = process.env.CONFIG_URL || path.join(process.cwd(), 'app_sample.json');
-const RemoteDebuggingPort = process.env.CHROME_PORT || 12565;
+const ConfigUrl = 'app_sample.json';
 const TimeoutMs = 60000;
 
 async function withTimeout(op) {
@@ -37,33 +31,12 @@ async function findPage(title, browser) {
     });
 }
 
-function launch() {
-    exec(IsWinOS ?
-        `${process.env.LOCALAPPDATA}\\OpenFin\\OpenFinRVM.exe --config=${ConfigUrl} --runtime-arguments="--remote-debugging-port=${RemoteDebuggingPort}"` :
-        `runtimeArgs="--remote-debugging-port=${RemoteDebuggingPort}" openfin -l -c ${ConfigUrl}`);
-}
-
-async function connect() {
-    return await withTimeout(async function () {
-        // connect via the local proxy Testable sets up to get details on each command as well as network related metrics
-        const opts = process.env.TESTABLE_WS_PROXY ? 
-              { browserWSEndpoint: `${process.env.TESTABLE_WS_PROXY}?debuggerAddress=localhost:${RemoteDebuggingPort}` } : 
-              { browserURL: `http://localhost:${RemoteDebuggingPort}` };
-        return await puppeteer.connect(opts);
-    });
+async function launch() {
+    return await puppeteer.launch({ channel: `openfin:${ConfigUrl}` });
 }
 
 before(async function () {
-    if (!IsTestable) {
-        // Launch OpenFin first if running local
-        launch();
-        // Try to connect until OpenFin is up
-        global.browser = await connect();
-    } else {
-        // if Testable we just need to pass the channel arg as openfin:[app-config-path]
-        // app config file can be a relative path within your scenario or a remote http(s) link
-        global.browser = await puppeteer.launch({ channel: 'openfin:app_sample.json' });
-    }
+    global.browser = await launch();
 });
 
 describe('Hello OpenFin App testing with Puppeteer', function () {

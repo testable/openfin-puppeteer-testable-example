@@ -4,6 +4,6 @@
   "dependencies": {
     "chai": "4.3.6",
     "mocha": "10.0.0",
-    "puppeteer-core": "19.8.0"
+    "puppeteer-core": "22.8.0"
   }
 }
